@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --config Release
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Install export smoke test
+        run: cmake --install build --config Release --prefix install
+      - name: Configure installed-package consumer
+        run: cmake -S tests/install_consumer -B consumer-build -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install"
+      - name: Build installed-package consumer
+        run: cmake --build consumer-build --config Release

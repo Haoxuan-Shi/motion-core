@@ -1,0 +1,12 @@
+build/
+out/
+cmake-build-*/
+CMakeUserPresets.json
+/trace.csv
+/demo-trace.csv
+*.user
+*.suo
+*.vcxproj*
+.vs/
+.vscode/
+
